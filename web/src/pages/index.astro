@@ -1,0 +1,183 @@
+---
+import Layout from '../layouts/Layout.astro'
+import {obtenerContenido, telInternacional, urlFoto} from '../lib/sanity'
+
+const {config, servicios, abogadas} = await obtenerContenido()
+
+const telPrincipal = config.telefonos[0]
+const waPrincipal = `https://wa.me/${telInternacional(telPrincipal)}`
+const mapaEmbed = config.direccion
+  ? `https://www.google.com/maps?q=${encodeURIComponent(config.direccion)}&output=embed`
+  : null
+const anio = new Date().getFullYear()
+const nombreEstudio = 'Estudio Jurídico Rosa Flores & Lida Vera'
+---
+
+<Layout
+  titulo={`${nombreEstudio} · Abogadas en Hohenau`}
+  descripcion={`Asesoramiento jurídico en Hohenau, Itapúa. ${servicios.map((s) => s.titulo).join(', ')}.`}
+>
+  <header class="nav">
+    <nav class="contenedor nav__inner" aria-label="Principal">
+      <a href="#inicio" class="marca">
+        <svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#C9A465" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"></path><path d="M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 7a3 3 0 0 0 6 0z"></path><path d="M8 21h8"></path></svg>
+        <span class="marca__textos">
+          <span class="marca__nombre">Rosa Flores &amp; Lida Vera</span>
+          <span class="marca__sub">Estudio Jurídico</span>
+        </span>
+      </a>
+      <div class="nav__links">
+        <a href="#nosotras">Quiénes somos</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#contacto">Contacto</a>
+        <a href={waPrincipal} class="btn btn--dorado btn--chico" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero oscuro">
+      <div class="contenedor hero__grid">
+        <div class="hero__texto">
+          <p class="etiqueta">Hohenau · Itapúa</p>
+          <h1>{config.tituloPortada}</h1>
+          {config.subtituloPortada && <p class="hero__sub">{config.subtituloPortada}</p>}
+          <div class="hero__botones">
+            <a href={waPrincipal} class="btn btn--dorado" target="_blank" rel="noopener">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.5A9 9 0 1 1 21 12z"></path></svg>
+              Escribinos por WhatsApp
+            </a>
+            <a href="#servicios" class="btn btn--borde">Ver servicios</a>
+          </div>
+        </div>
+
+        <aside class="tarjeta-contacto" aria-label="Datos de contacto">
+          <p class="tarjeta-contacto__titulo">Encontranos</p>
+          {config.direccion && (
+            <div class="dato">
+              <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A465" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>
+              <p>{config.direccion}</p>
+            </div>
+          )}
+          <div class="dato">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A465" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"></rect><path d="M11 18h2"></path></svg>
+            <div class="dato__tels">
+              {config.telefonos.map((t) => <a href={`tel:+${telInternacional(t)}`}>{t}</a>)}
+            </div>
+          </div>
+          {config.horario && (
+            <div class="dato">
+              <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A465" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+              <p>{config.horario}</p>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+
+    <section id="nosotras" class="seccion">
+      <div class="contenedor">
+        <div class="encabezado">
+          <p class="etiqueta">Quiénes somos</p>
+          <h2>Dos abogadas comprometidas con tu caso</h2>
+          {config.presentacion && <p>{config.presentacion}</p>}
+        </div>
+        <div class="grilla">
+          {abogadas.map((a) => {
+            const foto = urlFoto(a.foto, 700, 700)
+            return (
+              <article class="abogada">
+                {foto ? (
+                  <img class="abogada__foto" src={foto} alt={a.foto?.alt || `Abg. ${a.nombre}`} width="700" height="700" loading="lazy" />
+                ) : (
+                  <div class="abogada__placeholder" aria-hidden="true">[Foto de {a.nombre}]</div>
+                )}
+                <div class="abogada__info">
+                  <h3>Abg. {a.nombre}</h3>
+                  <p class="abogada__mat">Abogada{a.matricula ? ` · Mat. N.º ${a.matricula}` : ''}</p>
+                  {a.bio && <p class="abogada__bio">{a.bio}</p>}
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+
+    <section id="servicios" class="seccion seccion--alt">
+      <div class="contenedor">
+        <div class="encabezado">
+          <p class="etiqueta">Nuestras propuestas</p>
+          <h2>¿En qué te podemos ayudar?</h2>
+        </div>
+        <div class="grilla">
+          {servicios.map((s, i) => (
+            <article class="servicio">
+              <div class="servicio__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+              <h3>{s.titulo}</h3>
+              <p>{s.descripcion}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="contenedor">
+        <div class="encabezado"><h2>Cómo trabajamos</h2></div>
+        <div class="pasos">
+          <div class="paso">
+            <p class="paso__n">PASO 1</p>
+            <h3>Nos contás tu situación</h3>
+            <p>Por WhatsApp, llamada o en la oficina. Te escuchamos con atención y de forma confidencial.</p>
+          </div>
+          <div class="paso">
+            <p class="paso__n">PASO 2</p>
+            <h3>Analizamos tu caso</h3>
+            <p>Revisamos la documentación y te explicamos en palabras claras qué opciones tenés.</p>
+          </div>
+          <div class="paso">
+            <p class="paso__n">PASO 3</p>
+            <h3>Te acompañamos</h3>
+            <p>Llevamos adelante las gestiones y te mantenemos al tanto de cada avance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto" class="seccion" style="padding-top: 0">
+      <div class="contenedor">
+        <div class="cta">
+          <div class="cta__texto">
+            <h2>Agendá tu consulta</h2>
+            <p>Escribinos y coordinamos un horario.{config.direccion && ` Estamos en ${config.direccion}.`}</p>
+            <div class="cta__botones">
+              {config.telefonos.map((t, i) => (
+                <a href={`https://wa.me/${telInternacional(t)}`} class={i === 0 ? 'btn btn--dorado' : 'btn btn--borde'} target="_blank" rel="noopener">
+                  WhatsApp {t}
+                </a>
+              ))}
+              {config.mapaUrl && (
+                <a href={config.mapaUrl} class="btn btn--borde" target="_blank" rel="noopener">Cómo llegar</a>
+              )}
+            </div>
+          </div>
+          {mapaEmbed && (
+            <iframe class="cta__mapa" src={mapaEmbed} title="Ubicación del estudio en Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          )}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <p>© {anio} {nombreEstudio} · Hohenau, Paraguay</p>
+      <p>La información de este sitio es orientativa y no reemplaza una consulta profesional.</p>
+    </div>
+  </footer>
+
+  <a href={waPrincipal} class="wa-flotante" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+    <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.5A9 9 0 1 1 21 12z"></path></svg>
+  </a>
+</Layout>

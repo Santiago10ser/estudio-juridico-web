@@ -1,0 +1,16 @@
+{
+  "name": "estudio-juridico-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@sanity/client": "^8.16.0",
+    "@sanity/image-url": "^2.2.0",
+    "astro": "^7.4.13"
+  }
+}
